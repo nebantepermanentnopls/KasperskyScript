@@ -1,4 +1,4 @@
-to_mail = 'example@example.com'
-from_mail = 'example@example.com'
-password = 'password'
-server_name = 'smtp.example.com:port'
+TO_MAIL = 'example@example.com'
+FROM_MAIL = 'example@example.com'
+PASSWORD = 'password'
+SERVER_NAME = 'smtp.example.com:port'
