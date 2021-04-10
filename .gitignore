@@ -1,3 +1,4 @@
-CatFacts.json
+cat_facts.json
 venv
 .idea
+smtp_config.py
