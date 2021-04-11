@@ -1,16 +1,16 @@
 #!/bin/python3
 
 from smtp_config import TO_MAIL, FROM_MAIL, PASSWORD, SERVER_NAME
+from datetime import datetime, timedelta
 import requests
 import os
 import json
 import smtplib
-import time
 
 
 FILE_NAME = 'cat_facts.json'        # Файл для сохранения фактов
 NUM_FACTS = 2                       # Количество фактов
-OLDNESS = 10                        # Время в минутах
+OLDNESS = 2                         # Время в минутах
 MAX_NO_MAIL = 10                    # Максимальное допустимое количество неотправленных фактов
 
 
@@ -40,8 +40,7 @@ for fact in res.json():
     new_fact = {
         'fact': fact['text'],
         'mail': 'Did`t sent',
-        'norm_time': time.ctime(time.time()),
-        'time': time.time()
+        'time': str(datetime.today())
     }
     fact_data.append(new_fact)
 
@@ -55,8 +54,10 @@ for i in range(len(fact_data)):
     if fact_data[i]['mail'] == 'Did`t sent':
         if mail_first_fact == -1:
             mail_first_fact = i
-    if time.time() - fact_data[i]['time'] > OLDNESS * 60:
+    if datetime.today() - datetime.strptime(fact_data[i]['time'],
+                                            '%Y-%m-%d %H:%M:%S.%f') > timedelta(days=0, minutes=OLDNESS):
         outdated_facts += 1
+
 
 len_data = len(fact_data)
 no_mail_facts = len(fact_data[mail_first_fact:])
@@ -91,6 +92,7 @@ if outdated_facts != 0:
     print('Deleting outdated facts...')
     del fact_data[0:outdated_facts]
     print('Facts were removed!!!')
+    print(f'Facts after remove: {len(fact_data)}')
 
 
 # Записываем обновленные данные в файл
