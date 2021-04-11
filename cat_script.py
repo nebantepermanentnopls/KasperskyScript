@@ -9,9 +9,9 @@ import time
 
 
 FILE_NAME = 'cat_facts.json'        # Файл для сохранения фактов
-NUM_FACTS = 500                     # Количество фактов
+NUM_FACTS = 2                       # Количество фактов
 OLDNESS = 10                        # Время в минутах
-MAX_NO_MAIL = 1                     # Максимальное допустимое количество неотправленных фактов
+MAX_NO_MAIL = 10                    # Максимальное допустимое количество неотправленных фактов
 
 
 # Проверка для ислючения ошибок, если файл пуст или файла не существует
@@ -82,6 +82,7 @@ if no_mail_facts > MAX_NO_MAIL:
     print('Facts were sent!!!')
     for i in range(mail_first_fact, len(fact_data)):
         fact_data[i]['mail'] = 'Sent'
+
 
 # Удаляем устаревшие факты
 if outdated_facts != 0:
