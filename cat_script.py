@@ -1,17 +1,16 @@
 #!/bin/python3
 
-from smtp_config import TO_MAIL, FROM_MAIL, PASSWORD, SERVER_NAME
+from smtp_config import TO_MAIL, FROM_MAIL, PASSWORD, SERVER_NAME, SUBJECT
 from datetime import datetime, timedelta
 import requests
 import os
 import json
 import smtplib
 
-
 FILE_NAME = 'cat_facts.json'        # Файл для сохранения фактов
 NUM_FACTS = 2                       # Количество фактов
-OLDNESS = 2                         # Время в минутах
 MAX_NO_MAIL = 10                    # Максимальное допустимое количество неотправленных фактов
+OLDNESS = 7                         # Время уставревания(дни)
 
 
 # Проверка для ислючения ошибок, если файл пуст или файла не существует
@@ -34,7 +33,6 @@ print('-----------------------------------------------')
 print('Uploading facts...')
 res = requests.get(f'https://cat-fact.herokuapp.com/facts/random?animal_type=cat&amount={NUM_FACTS}')
 print('Facts uploaded!')
-
 # Формируем факт и данные о нем, с которыми мы будем работать
 for fact in res.json():
     new_fact = {
@@ -47,7 +45,6 @@ for fact in res.json():
 
 # Цикл для подсчета фактов для почты и времени
 print('-----------------------------------------------')
-
 mail_first_fact = -1                # Первый неотправленный по почте факт
 outdated_facts = 0                  # Последний устаревший факт
 for i in range(len(fact_data)):
@@ -55,12 +52,11 @@ for i in range(len(fact_data)):
         if mail_first_fact == -1:
             mail_first_fact = i
     if datetime.today() - datetime.strptime(fact_data[i]['time'],
-                                            '%Y-%m-%d %H:%M:%S.%f') > timedelta(days=0, minutes=OLDNESS):
+                                            '%Y-%m-%d %H:%M:%S.%f') > timedelta(days=OLDNESS):
         outdated_facts += 1
 
-
-len_data = len(fact_data)
-no_mail_facts = len(fact_data[mail_first_fact:])
+len_data = len(fact_data)                               # Количество фактов после загрузки
+no_mail_facts = len(fact_data[mail_first_fact:])        # Количество неотправленных фактов
 print(f'Before upload facts: {len_data - NUM_FACTS}')
 print(f'After upload facts: {len_data}')
 print(f'Facts not sent by mail: {no_mail_facts}')
@@ -76,7 +72,7 @@ if no_mail_facts > MAX_NO_MAIL:
     smtp_server = smtplib.SMTP(SERVER_NAME)
     smtp_server.starttls()
     smtp_server.login(FROM_MAIL, PASSWORD)
-    message = json.dumps(fact_data[mail_first_fact:], indent=2)
+    message = f'Subject: {SUBJECT}\n{json.dumps(fact_data[mail_first_fact:], indent=2)}'
     smtp_server.sendmail(FROM_MAIL, TO_MAIL, message)
     smtp_server.quit()
 
