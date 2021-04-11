@@ -2,3 +2,4 @@ cat_facts.json
 venv
 .idea
 smtp_config.py
+__pycache__
