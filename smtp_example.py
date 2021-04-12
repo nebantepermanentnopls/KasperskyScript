@@ -1,5 +1,5 @@
-TO_MAIL = 'example@example.com'
-FROM_MAIL = 'example@example.com'
-PASSWORD = 'password'
-SERVER_NAME = 'smtp.example.com:port'
-SUBJECT = 'Cat facts!!!'
+TO_MAIL = 'example@example.com'           # Адрес получателя
+FROM_MAIL = 'example@example.com'         # Адрес отправителя
+PASSWORD = 'password'                     # Пароль отправителя
+SERVER_NAME = 'smtp.example.com:port'     # Почтовый сервер на который будет отправлено письмо
+SUBJECT = 'Cat facts!!!'                  # Тема письма
